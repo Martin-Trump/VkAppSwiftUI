@@ -7,10 +7,11 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct LogInView: View {
     @State private var login = ""
     @State private var password = ""
-    
+    @State private var showIncorrectWarning = false
+    @Binding var isLoggedIn: Bool 
     var body: some View {
         ZStack {
             GeometryReader { geometry in
@@ -23,12 +24,12 @@ struct ContentView: View {
             }
                 VStack() {
                     VStack(alignment: .center) {
-                            TextField("Почта или телефон", text: $login).textFieldStyle(RoundedBorderTextFieldStyle())
+                            TextField("Почта или телефон", text: $login)
                                 
-                            SecureField("Пароль", text: $password).textFieldStyle(RoundedBorderTextFieldStyle())
+                            SecureField("Пароль", text: $password)
                                 
-                    }.padding(25)
-                    Button(action: self.onLoginPressed) {
+                    }.padding(25).textFieldStyle(RoundedBorderTextFieldStyle()).autocapitalization(.none)
+                    Button(action: self.verifyLogin) {
                             HStack {
                                 Text("Log in")
                                 Image(systemName: "checkmark.circle.fill")
@@ -38,16 +39,22 @@ struct ContentView: View {
                 }
             }.onTapGesture {
                 UIApplication.shared.endEditing()
-                    }
+            }.alert(isPresented: $showIncorrectWarning, content: {Alert(title: Text("Error"), message: Text("Incorrect Login or Password"))})
         }
-    private func onLoginPressed() {
+    private func verifyLogin() {
+        if login == "k" && password == "k" {
+            isLoggedIn = true
+            
+        } else {
+            showIncorrectWarning = true
+        }
     }
 }
 
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        LogInView(isLoggedIn: .constant(false))
     }
 }
 
